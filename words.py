@@ -1,10 +1,6 @@
 # Classes for all words
 
-voicelessConsonants = ['s', 'x', 'z', 'h'] # h is for sh and ch
-vowels = ['a', 'e', 'i', 'o', 'u']
-
-
-
+from utils import voicelessConsonants, vowels
 
 # Noun class handles all noun permutations
 class Noun:

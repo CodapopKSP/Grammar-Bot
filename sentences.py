@@ -1,8 +1,11 @@
-from words import Noun, Verb, Adjective, Adverb
+# |--------------|
+# |  Statements  |
+# |--------------|
 
-vowels = ['a', 'e', 'i', 'o', 'u']
+from NounPicked import Noun_Picked
+from VerbPicked import Verb_Picked
 
-
+# Builds a sentence by choosing parts of speech and combining them
 class Statement:
 	def __init__(self):
 		# Noun Assets
@@ -13,18 +16,21 @@ class Statement:
 		# Verb Assets
 		self.verbs = []
 
+	# Choose nouns and add them to subject or object lists
 	def add_noun_to_sentence(self, noun=None):
-		# Build subject and object nouns lists
+		# Subject nouns
 		if self.nounCount < 4:
 			if noun:
-				nounPicked = Noun_Picked(noun.singular, noun.plural())
+				nounPicked = Noun_Picked(noun)
 				self.subjectNouns.append(nounPicked)
+		# Object nouns
 		else:
 			if noun:
-				nounPicked = Noun_Picked(noun.singular, noun.plural())
+				nounPicked = Noun_Picked(noun)
 				self.objectNouns.append(nounPicked)
 		self.nounCount += 1
 
+	# Check for duplicates in subject and object nouns lists
 	def check_noun_duplicates(self):
 		# Check for duplicates in subjectNouns and update bool
 		for n in range(0, len(self.subjectNouns)):
@@ -44,7 +50,9 @@ class Statement:
 				if self.subjectNouns[n].singular == self.objectNouns[i].singular:
 					self.objectNouns[i].add_duplicate()
 
+	# Build a noun phrases, separating words with spaces, commas, and 'and' where necessary
 	def build_combo_noun_phrase(self):
+		#Subject nouns
 		if len(self.subjectNouns) > 0:
 			subjectPhrase = self.subjectNouns[0].nounPhrase + ' '
 			if len(self.subjectNouns) > 1:
@@ -54,7 +62,7 @@ class Statement:
 					if len(self.subjectNouns) > 3:
 						subjectPhrase = self.subjectNouns[0].nounPhrase + ', ' + self.subjectNouns[1].nounPhrase + ', ' + self.subjectNouns[2].nounPhrase + ', and ' + self.subjectNouns[3].nounPhrase + ' '
 			self.subjectPhrase = subjectPhrase
-
+		# Object nouns
 		objectPhrase = ''
 		if len(self.objectNouns) > 0:
 			objectPhrase = self.objectNouns[0].nounPhrase
@@ -66,13 +74,14 @@ class Statement:
 						objectPhrase = self.objectNouns[0].nounPhrase + ', ' + self.objectNouns[1].nounPhrase + ', ' + self.objectNouns[2].nounPhrase + ', and ' + self.objectNouns[3].nounPhrase
 		self.objectPhrase = objectPhrase
 
+	# Add verbs to list to prepare for phrase building
 	def add_verb_to_sentence(self, verb=None):
 		if verb:
-			verbPicked = Verb_Picked(verb.present, verb.past(), verb.he_she_it())
+			verbPicked = Verb_Picked(verb)
 			self.verbs.append(verbPicked)
 
+	# Make sure there are no duplicate verbs
 	def check_verb_duplicates(self):
-		# Check for duplicates in subjectNouns and update bool
 		verbsDuplicateList = []
 		for v in range(0, len(self.verbs)):
 			for i in range(0, v):
@@ -82,6 +91,7 @@ class Statement:
 		for i in verbsDuplicateList:
 			self.verbs.pop(i)
 
+	# Build a verb phrases, separating words with spaces, commas, and 'and' where necessary
 	def build_verb_phrase(self):
 		if len(self.verbs) > 0:
 			verbPhrase = self.verbs[0].permutation + ' '
@@ -91,6 +101,7 @@ class Statement:
 					verbPhrase = self.verbs[0].permutation + ', ' + self.verbs[1].permutation + ', and ' + self.verbs[2].permutation + ' '
 			self.verbPhrase = verbPhrase
 
+	# Build the final sentence with punctuation
 	def build_sentence(self):
 		if self.objectPhrase:
 			finalSentence = self.subjectPhrase + self.verbPhrase + self.objectPhrase
@@ -99,72 +110,3 @@ class Statement:
 		if finalSentence[-1] == ' ':
 			finalSentence = finalSentence[:-1]
 		self.finalSentence = finalSentence.capitalize() + '.'
-
-
-
-
-class Noun_Picked:
-	def __init__(self, singular, plural):
-		self.singular = singular
-		self.plural = plural
-		self.name = singular
-		self.duplicateBool = False
-		self.pluralBool = False
-		self.adjList = []
-
-	# Boolean to determine singular 0 or plural 1
-	def decide_plural(self, plural_bool):
-		self.pluralBool = plural_bool
-		if plural_bool:
-			self.name = self.plural
-
-	def add_adjectives(self, adj=None):
-		if adj:
-			self.adjList.append(adj)
-
-	def build_adjective_phrase(self):
-		self.check_adj_duplicates()
-		if len(self.adjList) > 0:
-			adjectivePhrase = self.adjList[0].name + ' '
-			if len(self.adjList) > 1:
-				adjectivePhrase = self.adjList[0].name + ', ' + self.adjList[1].name + ' '
-				if len(self.adjList) > 2:
-					adjectivePhrase = self.adjList[0].name + ', ' + self.adjList[1].name + ', and ' + self.adjList[2].name + ' '
-			self.adjectivePhrase = adjectivePhrase
-		else:
-			self.adjectivePhrase = ''
-
-	def check_adj_duplicates(self):
-		adjDuplicateList = []
-		for a in range(0, len(self.adjList)):
-			for i in range(0, a):
-				if (self.adjList[a].name == self.adjList[i].name):
-					adjDuplicateList.append(a)
-					break
-		for i in range(0, len(adjDuplicateList)):
-			self.adjList.pop(i)
-
-	# Boolean to show if nouns list has this noun already
-	def add_duplicate(self):
-		self.duplicateBool = True
-
-	def add_determiner(self, determiner):
-		if determiner:
-			self.determiner = determiner + ' '
-		else:
-			self.determiner = ''
-
-	def build_noun_phrase(self):
-		self.nounPhrase = self.determiner + self.adjectivePhrase + self.name
-
-
-
-
-
-
-class Verb_Picked:
-	def __init__(self, present, past, he_she_it):
-		self.present = present
-		self.past = past
-		self.heSheIt = he_she_it
-		self.permutation = present

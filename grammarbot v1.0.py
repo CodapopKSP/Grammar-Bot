@@ -5,13 +5,13 @@
 numberOfSentences = 10
 sentence_nouns_probability = [1, 10, 40, 100, 95, 40, 10, 1]
 sentence_verbs_probability = [100, 45, 1]
-sentence_adjectives_probability = [100, 100, 100]#[75, 15, 1]
+sentence_adjectives_probability = [75, 15, 1]
 
 
 from random import randint
-from words import Noun, Verb, Adjective, Adverb
 import nounlist, verblist, adjectivelist, determinerlist
 from sentences import Statement
+from utils import vowels
 
 # Populate word lists
 nouns = nounlist.nounsList
@@ -20,8 +20,6 @@ intransitiveVerbs = verblist.intransitiveVerbsList
 adjectives = adjectivelist.adjList
 singularDeterminers = determinerlist.determinerSingularList
 pluralDeterminers = determinerlist.determinerPluralList
-
-vowels = ['a', 'e', 'i', 'o', 'u']
 
 def choose_word(percent_chance, word_list_type):
 	percentRand = randint(0, 99)
@@ -40,7 +38,7 @@ def choose_determiners(n):
 	else:
 		determiner = singularDeterminers[randint(0, len(singularDeterminers)-1)]
 		if (determiner == 'a'):
-			if n.adjList[0]:
+			if len(n.adjList) > 0:
 				if n.adjList[0].name[0] in vowels:
 					determiner = 'an'
 			else:
